@@ -67,6 +67,16 @@ main {
   padding: 1.5rem;
 }
 
+footer {
+  max-width: 1180px;
+  margin: 1.5rem auto 0;
+  padding: 1rem 1.5rem 2rem;
+  border-top: 1px solid var(--panel-border);
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
 h1 {
   font-size: 1.35rem;
   font-weight: 700;
