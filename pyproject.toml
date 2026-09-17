@@ -2,7 +2,7 @@
 name = "cvelistv5-fetcher"
 version = "0.1.0"
 description = "Fetch CVE Program 5.0 records into a local database with a search dashboard"
-authors = [{ name = "Florian Fischer", email = "florian@bitfischer.de" }]
+authors = [{ name = "Florian Fischer", email = "oss@bitfischer.de" }]
 license = "MIT"
 requires-python = ">=3.11"
 dependencies = [
