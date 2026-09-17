@@ -24,9 +24,33 @@ Chart.defaults.color = MUTED;
 Chart.defaults.borderColor = BORDER;
 Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
 
-const charts = { severity: null, cvssHist: null, trend: null, vendors: null, products: null };
+const charts = { severity: null, cvssHist: null, cumulative: null, trend: null, vendors: null, products: null };
 let currentStats = null;
 let currentRange = "1y";
+
+function hexToRgba(hex, alpha) {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+// Buckets the monthly published-date trend into yearly totals, then turns
+// those into a running total so the chart reads as catalog growth over time.
+function cumulativeByYear(monthlyTrend) {
+  const perYear = new Map();
+  for (const { month, count } of monthlyTrend) {
+    const year = month.slice(0, 4);
+    perYear.set(year, (perYear.get(year) || 0) + count);
+  }
+  const years = [...perYear.keys()].sort();
+  let running = 0;
+  return years.map((year) => {
+    running += perYear.get(year);
+    return { year, total: running };
+  });
+}
 
 function renderKpiStrip(stats) {
   const highRisk = (stats.by_severity.CRITICAL || 0) + (stats.by_severity.HIGH || 0);
@@ -86,6 +110,36 @@ function renderCvssHistogram(stats) {
   const unscored = Math.max(0, stats.total - scored);
   document.getElementById("cvss-hist-caption").textContent =
     `Distribution of ${scored.toLocaleString()} scored CVEs (${unscored.toLocaleString()} unscored, out of ${stats.total.toLocaleString()} total)`;
+}
+
+function renderCumulativeChart(stats) {
+  const points = cumulativeByYear(stats.ingestion_trend);
+  charts.cumulative?.destroy();
+  charts.cumulative = new Chart(document.getElementById("cumulative-chart"), {
+    type: "line",
+    data: {
+      labels: points.map((p) => p.year),
+      datasets: [
+        {
+          label: "Total CVEs",
+          data: points.map((p) => p.total),
+          borderColor: ACCENT,
+          backgroundColor: hexToRgba(ACCENT, 0.15),
+          fill: true,
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.2,
+        },
+      ],
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: BORDER } },
+        x: { grid: { display: false } },
+      },
+    },
+  });
 }
 
 function renderTrendChart(range) {
@@ -191,6 +245,7 @@ async function loadDashboard() {
     renderKpiStrip(stats);
     renderSeverityChart(stats);
     renderCvssHistogram(stats);
+    renderCumulativeChart(stats);
     renderTrendChart(currentRange);
     renderBarChart("vendors", "vendors-chart", stats.top_vendors);
     renderBarChart("products", "products-chart", stats.top_products);

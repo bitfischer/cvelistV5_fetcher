@@ -376,10 +376,27 @@ tbody tr:hover {
   color: var(--muted);
 }
 
+.chart-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+
+.chart-card-header h3 {
+  margin: 0;
+}
+
 .range-filter {
   display: flex;
   gap: 0.4rem;
   margin-bottom: 0.8rem;
+}
+
+.chart-card-header .range-filter {
+  margin-bottom: 0;
 }
 
 .range-filter button {

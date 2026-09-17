@@ -52,15 +52,24 @@
 
     <section class="dash-section">
       <h2>Activity</h2>
-      <div class="range-filter" id="trend-range" role="group" aria-label="Time range">
-        <button data-range="3m">3M</button>
-        <button data-range="6m">6M</button>
-        <button data-range="1y" class="active">1Y</button>
-        <button data-range="3y">3Y</button>
-        <button data-range="all">All</button>
-      </div>
-      <div class="chart-card">
-        <canvas id="trend-chart"></canvas>
+      <div class="chart-row">
+        <div class="chart-card">
+          <h3>Total CVEs over time</h3>
+          <canvas id="cumulative-chart"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h3>Published vs modified</h3>
+            <div class="range-filter" id="trend-range" role="group" aria-label="Time range">
+              <button data-range="3m">3M</button>
+              <button data-range="6m">6M</button>
+              <button data-range="1y" class="active">1Y</button>
+              <button data-range="3y">3Y</button>
+              <button data-range="all">All</button>
+            </div>
+          </div>
+          <canvas id="trend-chart"></canvas>
+        </div>
       </div>
     </section>
 
