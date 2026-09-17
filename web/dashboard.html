@@ -1,0 +1,53 @@
+<!doctype html>
+<!--
+  Copyright (c) 2026 Florian Fischer
+  SPDX-License-Identifier: MIT
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>cvelistV5_fetcher — Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <nav>
+    <span class="brand">cvelistV5_fetcher</span>
+    <a href="/index.html">Search</a>
+    <a href="/dashboard.html" class="active">Dashboard</a>
+  </nav>
+
+  <main>
+    <div class="dashboard-header">
+      <h1>Dashboard</h1>
+      <div class="fetch-control">
+        <button id="fetch-btn">Fetch new CVEs</button>
+        <span id="fetch-status" class="fetch-status"></span>
+      </div>
+    </div>
+
+    <div class="stat-cards" id="stat-cards">
+      <div class="stat-card"><div class="value">—</div><div class="label">Total CVEs</div></div>
+    </div>
+
+    <div class="charts">
+      <div class="chart-card">
+        <h3>Severity distribution</h3>
+        <canvas id="severity-chart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Top vendors</h3>
+        <canvas id="vendors-chart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Published CVEs per month</h3>
+        <canvas id="trend-chart"></canvas>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

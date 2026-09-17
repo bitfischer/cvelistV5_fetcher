@@ -1,0 +1,69 @@
+<!doctype html>
+<!--
+  Copyright (c) 2026 Florian Fischer
+  SPDX-License-Identifier: MIT
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>cvelistV5_fetcher — Search</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <nav>
+    <span class="brand">cvelistV5_fetcher</span>
+    <a href="/index.html" class="active">Search</a>
+    <a href="/dashboard.html">Dashboard</a>
+  </nav>
+
+  <main>
+    <h1>Search CVEs</h1>
+
+    <div class="filters">
+      <input type="search" id="q" placeholder="CVE ID, title, or description..." />
+      <input type="text" id="vendor" list="vendor-options" placeholder="Vendor" />
+      <datalist id="vendor-options"></datalist>
+      <input type="text" id="product" list="product-options" placeholder="Product" />
+      <datalist id="product-options"></datalist>
+      <select id="severity">
+        <option value="">Any severity</option>
+        <option value="CRITICAL">Critical</option>
+        <option value="HIGH">High</option>
+        <option value="MEDIUM">Medium</option>
+        <option value="LOW">Low</option>
+        <option value="NONE">None</option>
+      </select>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>CVE ID</th>
+          <th>Title</th>
+          <th>Severity</th>
+          <th>CVSS</th>
+          <th>Published</th>
+          <th>Vendor / Product</th>
+        </tr>
+      </thead>
+      <tbody id="results-body">
+        <tr><td colspan="6" class="loading">Loading...</td></tr>
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button id="prev-page">&larr; Prev</button>
+      <span id="page-info"></span>
+      <button id="next-page">Next &rarr;</button>
+    </div>
+  </main>
+
+  <div class="overlay hidden" id="detail-overlay">
+    <div class="detail-card" id="detail-card"></div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/search.js"></script>
+</body>
+</html>

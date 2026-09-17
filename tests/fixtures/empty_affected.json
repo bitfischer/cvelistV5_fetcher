@@ -1,0 +1,19 @@
+{
+  "dataType": "CVE_RECORD",
+  "dataVersion": "5.1",
+  "cveMetadata": {
+    "cveId": "CVE-2024-44444",
+    "state": "PUBLISHED",
+    "datePublished": "2024-05-01T00:00:00.000Z",
+    "dateUpdated": "2024-05-01T00:00:00.000Z"
+  },
+  "containers": {
+    "cna": {
+      "title": "No Affected Products",
+      "descriptions": [{"lang": "en", "value": "No affected products listed."}],
+      "affected": [],
+      "metrics": [],
+      "references": []
+    }
+  }
+}

@@ -1,0 +1,18 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8420:8420"
+    volumes:
+      - cvelistv5_data:/data
+    restart: unless-stopped
+
+  fetch:
+    build: .
+    volumes:
+      - cvelistv5_data:/data
+    command: ["cvelistv5-fetch"]
+    profiles: ["fetch"]
+
+volumes:
+  cvelistv5_data:

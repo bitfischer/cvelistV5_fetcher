@@ -1,0 +1,37 @@
+{
+  "dataType": "CVE_RECORD",
+  "dataVersion": "5.1",
+  "cveMetadata": {
+    "cveId": "CVE-2024-12345",
+    "state": "PUBLISHED",
+    "datePublished": "2024-03-01T10:00:00.000Z",
+    "dateUpdated": "2024-03-05T12:30:00.000Z"
+  },
+  "containers": {
+    "cna": {
+      "title": "Example Buffer Overflow",
+      "descriptions": [
+        {"lang": "en", "value": "A buffer overflow in Example Widget allows remote code execution."}
+      ],
+      "affected": [
+        {"vendor": "ExampleCorp", "product": "Widget", "cpes": ["cpe:2.3:a:examplecorp:widget:1.0:*:*:*:*:*:*:*"]},
+        {"vendor": "ExampleCorp", "product": "Gadget", "cpes": []},
+        {"vendor": "n/a", "product": "n/a", "cpes": []},
+        {"vendor": "", "product": "", "cpes": []}
+      ],
+      "metrics": [
+        {
+          "cvssV3_1": {
+            "baseScore": 9.8,
+            "baseSeverity": "CRITICAL",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+          }
+        }
+      ],
+      "references": [
+        {"url": "https://example.com/advisory", "tags": ["vendor-advisory"]},
+        {"url": "https://example.com/other", "tags": ["issue-tracking"]}
+      ]
+    }
+  }
+}

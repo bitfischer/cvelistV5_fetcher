@@ -1,0 +1,19 @@
+{
+  "dataType": "CVE_RECORD",
+  "dataVersion": "5.1",
+  "cveMetadata": {
+    "cveId": "CVE-2024-99999",
+    "state": "REJECTED",
+    "datePublished": "2024-01-01T00:00:00.000Z",
+    "dateUpdated": "2024-01-02T00:00:00.000Z"
+  },
+  "containers": {
+    "cna": {
+      "title": "",
+      "descriptions": [{"lang": "en", "value": "Rejected reason."}],
+      "affected": [],
+      "metrics": [],
+      "references": []
+    }
+  }
+}

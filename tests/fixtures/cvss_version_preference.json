@@ -1,0 +1,25 @@
+{
+  "dataType": "CVE_RECORD",
+  "dataVersion": "5.1",
+  "cveMetadata": {
+    "cveId": "CVE-2024-55555",
+    "state": "PUBLISHED",
+    "datePublished": "2024-06-01T00:00:00.000Z",
+    "dateUpdated": "2024-06-01T00:00:00.000Z"
+  },
+  "containers": {
+    "cna": {
+      "title": "Multiple CVSS Versions",
+      "descriptions": [{"lang": "en", "value": "Has v3.1, v3.0 and v4.0 metrics; v3.1 should win."}],
+      "affected": [{"vendor": "MultiCorp", "product": "Thing", "cpes": []}],
+      "metrics": [
+        {
+          "cvssV4_0": {"baseScore": 3.0, "baseSeverity": "LOW", "vectorString": "CVSS:4.0/..."},
+          "cvssV3_0": {"baseScore": 6.0, "baseSeverity": "MEDIUM", "vectorString": "CVSS:3.0/..."},
+          "cvssV3_1": {"baseScore": 8.1, "baseSeverity": "HIGH", "vectorString": "CVSS:3.1/..."}
+        }
+      ],
+      "references": []
+    }
+  }
+}

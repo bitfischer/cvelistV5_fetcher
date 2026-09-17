@@ -1,0 +1,23 @@
+{
+  "dataType": "CVE_RECORD",
+  "dataVersion": "5.1",
+  "cveMetadata": {
+    "cveId": "CVE-2024-22222",
+    "state": "PUBLISHED",
+    "datePublished": "2024-02-01T00:00:00.000Z",
+    "dateUpdated": "2024-02-01T00:00:00.000Z"
+  },
+  "containers": {
+    "cna": {
+      "title": "Non-English Only",
+      "descriptions": [
+        {"lang": "fr", "value": "Une description en francais."}
+      ],
+      "affected": [
+        {"vendor": "FrCorp", "product": "Outil", "cpes": []}
+      ],
+      "metrics": [],
+      "references": []
+    }
+  }
+}

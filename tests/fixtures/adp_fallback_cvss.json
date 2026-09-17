@@ -1,0 +1,33 @@
+{
+  "dataType": "CVE_RECORD",
+  "dataVersion": "5.1",
+  "cveMetadata": {
+    "cveId": "CVE-2024-33333",
+    "state": "PUBLISHED",
+    "datePublished": "2024-04-01T00:00:00.000Z",
+    "dateUpdated": "2024-04-01T00:00:00.000Z"
+  },
+  "containers": {
+    "cna": {
+      "title": "ADP Fallback",
+      "descriptions": [{"lang": "en", "value": "CNA provided no CVSS score."}],
+      "affected": [{"vendor": "AdpCorp", "product": "Thing", "cpes": []}],
+      "metrics": [],
+      "references": [{"url": "https://example.com/only-ref", "tags": ["issue-tracking"]}]
+    },
+    "adp": [
+      {
+        "title": "NVD",
+        "metrics": [
+          {
+            "cvssV3_0": {
+              "baseScore": 5.5,
+              "baseSeverity": "MEDIUM",
+              "vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
