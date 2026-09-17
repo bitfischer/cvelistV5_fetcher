@@ -1,0 +1,77 @@
+<!doctype html>
+<!--
+  Copyright (c) 2026 Florian Fischer
+  SPDX-License-Identifier: MIT
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>cvelistV5_fetcher — About</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <nav>
+    <span class="brand">cvelistV5_fetcher</span>
+    <a href="/index.html">Search</a>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/about.html" class="active">About</a>
+  </nav>
+
+  <main>
+    <h1>About</h1>
+
+    <section class="dash-section">
+      <h2>What is this?</h2>
+      <p>
+        cvelistV5_fetcher imports the CVE Program's public
+        <a href="https://github.com/CVEProject/cvelistV5" target="_blank" rel="noopener">CVE 5.0</a>
+        feed into a local database and puts a search page and dashboard on
+        top of it. Each raw record is normalized into a simple schema —
+        severity, CVSS score, affected vendors and products, description,
+        and reference links — and served through this UI and a documented
+        REST API at <a href="/docs">/docs</a>.
+      </p>
+      <p>
+        It's a proof-of-concept, not a production vulnerability feed: there's
+        no alerting, no deduplication against other sources, and no long-term
+        support commitment. It exists to show the fetch → parse → store →
+        search pipeline end to end, on real data.
+      </p>
+    </section>
+
+    <section class="dash-section">
+      <h2>Software Bill of Materials</h2>
+      <p>
+        Every third-party package this application depends on at runtime,
+        with its version, license, and
+        <a href="https://github.com/package-url/purl-spec" target="_blank" rel="noopener">package URL</a>.
+        Generated with <a href="https://github.com/CycloneDX/cyclonedx-python" target="_blank" rel="noopener">cyclonedx-py</a>
+        (<code class="mono">make sbom</code>) from a clean install of just the
+        runtime dependencies — no test or build tooling included.
+      </p>
+      <p class="sync-line" id="sbom-summary"></p>
+      <table id="sbom-table">
+        <thead>
+          <tr>
+            <th>Package</th>
+            <th>Version</th>
+            <th>License</th>
+            <th>Package URL</th>
+          </tr>
+        </thead>
+        <tbody id="sbom-body">
+          <tr><td colspan="4" class="loading">Loading...</td></tr>
+        </tbody>
+      </table>
+      <p class="chart-caption"><a href="/sbom.json" download>Download raw SBOM (CycloneDX JSON)</a></p>
+    </section>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/about.js"></script>
+</body>
+</html>

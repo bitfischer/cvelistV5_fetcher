@@ -31,6 +31,7 @@ not a production vulnerability feed or monitoring tool.
 - [Fetch CVE data](#fetch-cve-data)
 - [Run the app](#run-the-app)
 - [Tests](#tests)
+- [Software Bill of Materials](#software-bill-of-materials)
 - [Docker Compose](#docker-compose)
 - [Docker (without Compose)](#docker-without-compose)
 - [License](#license)
@@ -60,6 +61,7 @@ in new records on demand:
 | 🔍 **Search UI** | Filter by keyword, vendor, product, or severity, with autocomplete and a detail view per CVE. |
 | 📊 **Dashboard** | Key metrics (total, high-risk, new this week, average CVSS, vendors/products tracked), severity and CVSS-score distributions, a published-vs-modified activity trend with time-range filters, top vendors/products, and a recent-activity feed — plus a one-click "fetch new CVEs" button. |
 | 🔌 **REST API** | The same data is available over a documented HTTP API (FastAPI, interactive docs at `/docs`), so the UI is just one consumer of it. |
+| 📄 **About & SBOM** | An about page explaining the project, plus a full [Software Bill of Materials](#software-bill-of-materials) (CycloneDX) of every runtime dependency, with versions, licenses, and package URLs. |
 | 🐳 **Docker-ready** | Ships with a `Dockerfile` and `docker-compose.yml` for a one-command start. |
 
 ## Getting Started
@@ -115,6 +117,19 @@ for the dashboard. API docs are at http://localhost:8420/docs.
 ```sh
 make test
 ```
+
+## Software Bill of Materials
+
+```sh
+make sbom
+```
+
+Regenerates `web/sbom.json`, a [CycloneDX](https://cyclonedx.org/) SBOM listing
+every runtime dependency (version, license, package URL). It's generated from
+a clean, throwaway install of just the runtime dependencies — not the dev
+venv — so test/build tooling never leaks into it. The app serves it as a
+static file, and the [About page](http://localhost:8420/about.html) renders
+it as a table with a download link.
 
 ## Docker Compose
 

@@ -376,6 +376,11 @@ tbody tr:hover {
   color: var(--muted);
 }
 
+.chart-caption a,
+.chart-caption a:visited {
+  color: var(--accent);
+}
+
 .chart-card-header {
   display: flex;
   align-items: center;
@@ -447,5 +452,39 @@ tbody tr:hover {
 }
 
 .feed-table a:hover {
+  text-decoration: underline;
+}
+
+/* about page */
+.dash-section p {
+  max-width: 68ch;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.dash-section p a,
+.dash-section p a:visited {
+  color: var(--accent);
+}
+
+.dash-section code.mono {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.85em;
+}
+
+#sbom-table tbody tr {
+  cursor: default;
+}
+
+#sbom-table a,
+#sbom-table a:visited {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+#sbom-table a:hover {
   text-decoration: underline;
 }
