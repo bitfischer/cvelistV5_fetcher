@@ -25,17 +25,6 @@ function debounce(fn, delay) {
   };
 }
 
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str ?? "";
-  return div.innerHTML;
-}
-
-function formatDate(iso) {
-  if (!iso) return "—";
-  return iso.slice(0, 10);
-}
-
 async function loadResults() {
   resultsBody.innerHTML = '<tr><td colspan="6" class="loading">Loading...</td></tr>';
   try {
@@ -62,11 +51,11 @@ function renderResults(data) {
         const vendorsProducts = [...new Set([...item.vendors, ...item.products])].slice(0, 3).join(", ");
         return `
           <tr data-cve-id="${escapeHtml(item.cve_id)}">
-            <td>${escapeHtml(item.cve_id)}</td>
+            <td class="mono">${escapeHtml(item.cve_id)}</td>
             <td>${escapeHtml(item.title || "—")}</td>
             <td><span class="chip ${escapeHtml(item.severity || "UNKNOWN")}">${escapeHtml(item.severity || "UNKNOWN")}</span></td>
-            <td>${item.cvss_score ? item.cvss_score.toFixed(1) : "—"}</td>
-            <td>${formatDate(item.published_date)}</td>
+            <td class="mono">${item.cvss_score ? item.cvss_score.toFixed(1) : "—"}</td>
+            <td class="mono">${formatDate(item.published_date)}</td>
             <td>${escapeHtml(vendorsProducts || "—")}</td>
           </tr>`;
       })
@@ -89,13 +78,13 @@ async function openDetail(cveId) {
     const cve = await apiGet(`/api/cves/${encodeURIComponent(cveId)}`);
     detailCard.innerHTML = `
       <button class="close-btn" id="close-detail">&times;</button>
-      <h2>${escapeHtml(cve.cve_id)}</h2>
+      <h2 class="mono">${escapeHtml(cve.cve_id)}</h2>
       <div>${escapeHtml(cve.title || "")}</div>
       <dl>
         <dt>Severity</dt><dd><span class="chip ${escapeHtml(cve.severity || "UNKNOWN")}">${escapeHtml(cve.severity || "UNKNOWN")}</span></dd>
-        <dt>CVSS</dt><dd>${cve.cvss_score ? cve.cvss_score.toFixed(1) : "—"} ${escapeHtml(cve.cvss_vector || "")}</dd>
-        <dt>Published</dt><dd>${formatDate(cve.published_date)}</dd>
-        <dt>Modified</dt><dd>${formatDate(cve.modified_date)}</dd>
+        <dt>CVSS</dt><dd class="mono">${cve.cvss_score ? cve.cvss_score.toFixed(1) : "—"} ${escapeHtml(cve.cvss_vector || "")}</dd>
+        <dt>Published</dt><dd class="mono">${formatDate(cve.published_date)}</dd>
+        <dt>Modified</dt><dd class="mono">${formatDate(cve.modified_date)}</dd>
         <dt>Vendors</dt><dd>${cve.vendors.map((v) => `<span class="tag">${escapeHtml(v)}</span>`).join("") || "—"}</dd>
         <dt>Products</dt><dd>${cve.products.map((p) => `<span class="tag">${escapeHtml(p)}</span>`).join("") || "—"}</dd>
         <dt>Advisory</dt><dd>${cve.advisory_url ? `<a href="${escapeHtml(cve.advisory_url)}" target="_blank" rel="noopener">${escapeHtml(cve.advisory_url)}</a>` : "—"}</dd>
@@ -169,4 +158,16 @@ const refreshAutocomplete = debounce(async (kind, datalistId, prefix) => {
   }
 }, 250);
 
+const initialParams = new URLSearchParams(window.location.search);
+const initialQ = initialParams.get("q");
+const initialCve = initialParams.get("cve");
+if (initialQ) {
+  state.q = initialQ;
+  document.getElementById("q").value = initialQ;
+}
+
 loadResults();
+
+if (initialCve) {
+  openDetail(initialCve);
+}

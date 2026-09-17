@@ -1,32 +1,51 @@
 // Copyright (c) 2026 Florian Fischer
 // SPDX-License-Identifier: MIT
 
-const SEVERITY_COLORS = {
-  CRITICAL: "#e5484d",
-  HIGH: "#f2994a",
-  MEDIUM: "#f2c94c",
-  LOW: "#6fcf97",
-  NONE: "#6b7280",
-  UNKNOWN: "#6b7280",
-};
 const SEVERITY_ORDER = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "NONE", "UNKNOWN"];
+const RANGE_MONTHS = { "3m": 3, "6m": 6, "1y": 12, "3y": 36, all: Infinity };
 
-Chart.defaults.color = "#9aa3af";
-Chart.defaults.borderColor = "#262b36";
+const rootStyle = getComputedStyle(document.documentElement);
+const cssVar = (name) => rootStyle.getPropertyValue(name).trim();
 
-const charts = { severity: null, vendors: null, trend: null };
+const SEVERITY_COLORS = {
+  CRITICAL: cssVar("--critical"),
+  HIGH: cssVar("--high"),
+  MEDIUM: cssVar("--medium"),
+  LOW: cssVar("--low"),
+  NONE: cssVar("--none"),
+  UNKNOWN: cssVar("--none"),
+};
+const ACCENT = cssVar("--accent");
+const SERIES_2 = cssVar("--series-2");
+const MUTED = cssVar("--muted");
+const BORDER = cssVar("--panel-border");
 
-function renderStatCards(stats) {
-  const container = document.getElementById("stat-cards");
-  const cards = [
-    { label: "Total CVEs", value: stats.total.toLocaleString() },
-    ...SEVERITY_ORDER.filter((s) => stats.by_severity[s]).map((s) => ({
-      label: s,
-      value: stats.by_severity[s].toLocaleString(),
-    })),
+Chart.defaults.color = MUTED;
+Chart.defaults.borderColor = BORDER;
+Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
+
+const charts = { severity: null, cvssHist: null, trend: null, vendors: null, products: null };
+let currentStats = null;
+let currentRange = "1y";
+
+function renderKpiStrip(stats) {
+  const highRisk = (stats.by_severity.CRITICAL || 0) + (stats.by_severity.HIGH || 0);
+  const items = [
+    ["Total CVEs", stats.total.toLocaleString(), null],
+    ["High-risk", highRisk.toLocaleString(), "Critical + high severity"],
+    ["New this week", stats.new_last_7d.toLocaleString(), `${stats.new_last_30d.toLocaleString()} in the last 30 days`],
+    ["Avg CVSS", stats.avg_cvss != null ? stats.avg_cvss.toFixed(1) : "—", "Scored CVEs only"],
+    ["Vendors tracked", stats.distinct_vendor_count.toLocaleString(), null],
+    ["Products tracked", stats.distinct_product_count.toLocaleString(), null],
   ];
-  container.innerHTML = cards
-    .map((c) => `<div class="stat-card"><div class="value">${c.value}</div><div class="label">${c.label}</div></div>`)
+  document.getElementById("kpi-strip").innerHTML = items
+    .map(
+      ([label, value, title]) => `
+      <div class="kpi-item"${title ? ` title="${escapeHtml(title)}"` : ""}>
+        <div class="value">${value}</div>
+        <div class="label">${label}</div>
+      </div>`
+    )
     .join("");
 }
 
@@ -35,36 +54,50 @@ function renderSeverityChart(stats) {
   const data = labels.map((s) => stats.by_severity[s]);
   charts.severity?.destroy();
   charts.severity = new Chart(document.getElementById("severity-chart"), {
-    type: "doughnut",
-    data: {
-      labels,
-      datasets: [{ data, backgroundColor: labels.map((s) => SEVERITY_COLORS[s]) }],
-    },
-    options: { plugins: { legend: { position: "bottom" } } },
-  });
-}
-
-function renderVendorsChart(stats) {
-  const labels = stats.top_vendors.map((v) => v.name);
-  const data = stats.top_vendors.map((v) => v.count);
-  charts.vendors?.destroy();
-  charts.vendors = new Chart(document.getElementById("vendors-chart"), {
     type: "bar",
-    data: {
-      labels,
-      datasets: [{ label: "CVEs", data, backgroundColor: "#5b9dff" }],
-    },
+    data: { labels, datasets: [{ data, backgroundColor: labels.map((s) => SEVERITY_COLORS[s]) }] },
     options: {
       indexAxis: "y",
       plugins: { legend: { display: false } },
-      scales: { x: { beginAtZero: true } },
+      scales: {
+        x: { beginAtZero: true, grid: { color: BORDER } },
+        y: { grid: { display: false } },
+      },
     },
   });
 }
 
-function renderTrendChart(stats) {
-  const labels = stats.ingestion_trend.map((p) => p.month);
-  const data = stats.ingestion_trend.map((p) => p.count);
+function renderCvssHistogram(stats) {
+  const labels = stats.cvss_distribution.map((b) => b.range);
+  const data = stats.cvss_distribution.map((b) => b.count);
+  charts.cvssHist?.destroy();
+  charts.cvssHist = new Chart(document.getElementById("cvss-hist-chart"), {
+    type: "bar",
+    data: { labels, datasets: [{ data, backgroundColor: ACCENT, borderRadius: 3 }] },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: BORDER } },
+        x: { grid: { display: false } },
+      },
+    },
+  });
+  const scored = stats.cvss_distribution.reduce((sum, b) => sum + b.count, 0);
+  const unscored = Math.max(0, stats.total - scored);
+  document.getElementById("cvss-hist-caption").textContent =
+    `Distribution of ${scored.toLocaleString()} scored CVEs (${unscored.toLocaleString()} unscored, out of ${stats.total.toLocaleString()} total)`;
+}
+
+function renderTrendChart(range) {
+  const n = RANGE_MONTHS[range];
+  const slice = (arr) => (n === Infinity ? arr : arr.slice(-n));
+  const published = slice(currentStats.ingestion_trend);
+  const modified = slice(currentStats.modified_trend);
+  const longer = published.length >= modified.length ? published : modified;
+  const labels = longer.map((p) => p.month);
+  const publishedMap = new Map(published.map((p) => [p.month, p.count]));
+  const modifiedMap = new Map(modified.map((p) => [p.month, p.count]));
+
   charts.trend?.destroy();
   charts.trend = new Chart(document.getElementById("trend-chart"), {
     type: "line",
@@ -72,31 +105,105 @@ function renderTrendChart(stats) {
       labels,
       datasets: [
         {
-          label: "Published CVEs",
-          data,
-          borderColor: "#5b9dff",
-          backgroundColor: "rgba(91, 157, 255, 0.15)",
-          fill: true,
-          tension: 0.25,
+          label: "Published",
+          data: labels.map((m) => publishedMap.get(m) ?? 0),
+          borderColor: ACCENT,
+          backgroundColor: ACCENT,
           pointRadius: 0,
+          borderWidth: 2,
+          tension: 0.2,
+        },
+        {
+          label: "Modified",
+          data: labels.map((m) => modifiedMap.get(m) ?? 0),
+          borderColor: SERIES_2,
+          backgroundColor: SERIES_2,
+          pointRadius: 0,
+          borderWidth: 2,
+          tension: 0.2,
         },
       ],
     },
-    options: { plugins: { legend: { display: false } } },
+    options: {
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { display: true, position: "bottom" },
+        tooltip: { bodyFont: { family: "'IBM Plex Mono', monospace" } },
+      },
+      scales: {
+        y: { beginAtZero: true, grid: { color: BORDER } },
+        x: { grid: { display: false } },
+      },
+    },
   });
+}
+
+function setRange(range) {
+  currentRange = range;
+  document.querySelectorAll("#trend-range button").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.range === range);
+  });
+  if (currentStats) renderTrendChart(range);
+}
+
+function renderBarChart(key, canvasId, items) {
+  const labels = items.map((v) => v.name);
+  const data = items.map((v) => v.count);
+  charts[key]?.destroy();
+  charts[key] = new Chart(document.getElementById(canvasId), {
+    type: "bar",
+    data: { labels, datasets: [{ data, backgroundColor: ACCENT }] },
+    options: {
+      indexAxis: "y",
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { beginAtZero: true, grid: { color: BORDER } },
+        y: { grid: { display: false } },
+      },
+    },
+  });
+}
+
+function renderRecentFeed(stats) {
+  const container = document.getElementById("recent-feed");
+  if (!stats.recent_modified.length) {
+    container.innerHTML = '<tr><td colspan="4" class="empty">No recent activity.</td></tr>';
+    return;
+  }
+  container.innerHTML = stats.recent_modified
+    .map((item) => {
+      const severity = item.severity || "UNKNOWN";
+      return `
+        <tr>
+          <td><a href="/index.html?cve=${encodeURIComponent(item.cve_id)}" class="mono">${escapeHtml(item.cve_id)}</a></td>
+          <td><span class="chip ${escapeHtml(severity)}">${escapeHtml(severity)}</span></td>
+          <td>${escapeHtml(item.title || "—")}</td>
+          <td class="mono">${formatRelative(item.modified_date)}</td>
+        </tr>`;
+    })
+    .join("");
 }
 
 async function loadDashboard() {
   try {
     const stats = await apiGet("/api/stats");
-    renderStatCards(stats);
+    currentStats = stats;
+    renderKpiStrip(stats);
     renderSeverityChart(stats);
-    renderVendorsChart(stats);
-    renderTrendChart(stats);
+    renderCvssHistogram(stats);
+    renderTrendChart(currentRange);
+    renderBarChart("vendors", "vendors-chart", stats.top_vendors);
+    renderBarChart("products", "products-chart", stats.top_products);
+    renderRecentFeed(stats);
+    document.getElementById("last-synced").textContent = formatRelative(stats.last_fetch_at);
   } catch (err) {
-    document.getElementById("stat-cards").innerHTML = `<div class="empty">Failed to load stats: ${err.message}</div>`;
+    document.getElementById("kpi-strip").innerHTML = `<div class="empty">Failed to load stats: ${escapeHtml(err.message)}</div>`;
   }
 }
+
+document.querySelectorAll("#trend-range button").forEach((btn) => {
+  btn.addEventListener("click", () => setRange(btn.dataset.range));
+});
 
 // --- Fetch trigger + status polling ---
 

@@ -8,6 +8,9 @@
   <meta charset="utf-8" />
   <title>cvelistV5_fetcher — Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
@@ -19,32 +22,66 @@
   </nav>
 
   <main>
-    <div class="dashboard-header">
-      <h1>Dashboard</h1>
+    <header class="dash-header">
+      <div>
+        <h1>Dashboard</h1>
+        <p class="sync-line">Last synced <time id="last-synced" class="mono">—</time></p>
+      </div>
       <div class="fetch-control">
         <button id="fetch-btn">Fetch new CVEs</button>
         <span id="fetch-status" class="fetch-status"></span>
       </div>
-    </div>
+    </header>
 
-    <div class="stat-cards" id="stat-cards">
-      <div class="stat-card"><div class="value">—</div><div class="label">Total CVEs</div></div>
-    </div>
+    <section class="kpi-strip" id="kpi-strip" aria-label="Key metrics"></section>
 
-    <div class="charts">
-      <div class="chart-card">
-        <h3>Severity distribution</h3>
-        <canvas id="severity-chart"></canvas>
+    <section class="dash-section">
+      <h2>Severity &amp; risk</h2>
+      <div class="chart-row">
+        <div class="chart-card">
+          <h3>By severity</h3>
+          <canvas id="severity-chart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>CVSS score distribution</h3>
+          <canvas id="cvss-hist-chart"></canvas>
+          <p class="chart-caption" id="cvss-hist-caption"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="dash-section">
+      <h2>Activity</h2>
+      <div class="range-filter" id="trend-range" role="group" aria-label="Time range">
+        <button data-range="3m">3M</button>
+        <button data-range="6m">6M</button>
+        <button data-range="1y" class="active">1Y</button>
+        <button data-range="3y">3Y</button>
+        <button data-range="all">All</button>
       </div>
       <div class="chart-card">
-        <h3>Top vendors</h3>
-        <canvas id="vendors-chart"></canvas>
-      </div>
-      <div class="chart-card">
-        <h3>Published CVEs per month</h3>
         <canvas id="trend-chart"></canvas>
       </div>
-    </div>
+    </section>
+
+    <section class="dash-section">
+      <h2>Ecosystem</h2>
+      <div class="chart-row">
+        <div class="chart-card">
+          <h3>Top vendors</h3>
+          <canvas id="vendors-chart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Top products</h3>
+          <canvas id="products-chart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="dash-section">
+      <h2>Recently modified</h2>
+      <table class="feed-table" id="recent-feed"></table>
+    </section>
   </main>
 
   <script src="/js/api.js"></script>

@@ -58,7 +58,7 @@ in new records on demand:
 | 🔄 **Automatic sync** | Pulls CVE records from the official `cvelistV5` GitHub releases. First run imports everything (~370k+ records); every run after that only fetches what's new, so it's cheap to re-run on a schedule. |
 | 🧹 **Cleaned-up data** | Each raw record is normalized into a simple schema: severity level, [CVSS](https://www.first.org/cvss/) score (an industry-standard 0–10 severity rating), affected vendors/products, description, and reference links. |
 | 🔍 **Search UI** | Filter by keyword, vendor, product, or severity, with autocomplete and a detail view per CVE. |
-| 📊 **Dashboard** | Charts for severity breakdown, top affected vendors, and publication trend over time — plus a one-click "fetch new CVEs" button. |
+| 📊 **Dashboard** | Key metrics (total, high-risk, new this week, average CVSS, vendors/products tracked), severity and CVSS-score distributions, a published-vs-modified activity trend with time-range filters, top vendors/products, and a recent-activity feed — plus a one-click "fetch new CVEs" button. |
 | 🔌 **REST API** | The same data is available over a documented HTTP API (FastAPI, interactive docs at `/docs`), so the UI is just one consumer of it. |
 | 🐳 **Docker-ready** | Ships with a `Dockerfile` and `docker-compose.yml` for a one-command start. |
 
