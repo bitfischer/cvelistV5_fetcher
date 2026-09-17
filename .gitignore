@@ -1,6 +1,8 @@
 .venv/
 .sbom-venv/
 build/
+dist/
+*.spec
 __pycache__/
 *.pyc
 cves.db
